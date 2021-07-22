@@ -1,0 +1,47 @@
+cr = include_lib("/lib/crypto.so")
+mx = include_lib("/lib/metaxploit.so")
+
+
+
+crackPass = function(pass)
+	if pass.len != 2 then exit("crackPass: wrong syntax")
+	password = cr.decipher(pass[1])
+	return password	
+end function
+
+if params.len != 3 or params[0] == "-h" then exit("Usage: overload [lib] [memory address] [unsafe value]")
+
+lib = params[0]
+mem = params[1]
+var = params[2]
+
+cr.decipher()
+
+if not cr then exit("no crypto")
+if not mx then exit("no metaxploit")
+
+mlib = mx.load("/lib/"+lib)
+if not mlib then exit("no lib found")
+
+res = mlib.overflow(mem,var)
+
+if typeof(res) == "computer" then 
+	file = res.File("/etc/passwd")
+	if not file then exit("passwd not found")
+	if not file.has_permission("r") then exit("Error, no permission")
+	
+	users = file.get_content.split("\n")
+	for line in users
+		u_pass = line.split(":")
+		password = crackPass(u_pass)
+		if not password then
+			print("nothing found")
+		else 
+			print("-> " + password)
+		end if
+	end for
+else 
+	print("Expected computer Err")
+
+end if
+
