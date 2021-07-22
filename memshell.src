@@ -1,0 +1,25 @@
+if params.len != 4 or params[0] == "-h" or params[0] == "--help" then
+	exit("Usage: memshell [host] [port] [memory] [value]")
+end if
+
+mx = include_lib("/lib/metaxploit.so")
+if not mx then exit("no metaxploit found")
+
+host = params[0].trim
+port = params[1].trim.to_int
+mem = params[2]
+val = params[3]
+
+sess = mx.net_use(host,port)
+mlib = sess.dump_lib
+res  = mlib.overflow(mem, val)
+if typeof(res) == "shell" then
+	res.start_terminal
+else
+	if typeof(res) == "file" then
+		c = res.path
+	else 
+		print("Error: expected shell, obtained " + res)
+	end if
+end if
+
