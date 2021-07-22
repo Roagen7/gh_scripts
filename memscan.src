@@ -1,0 +1,16 @@
+if params.len != 2 or params[0] == "-h" then exit("cock")
+host = params[0].trim
+port = params[1].trim.to_int
+
+mx = include_lib("/lib/metaxploit.so")
+if not mx then exit("no metaxploit found")
+sess = mx.net_use(host, port)
+
+if not sess then exit("error: no such adress")
+mlib = sess.dump_lib
+sc = mx.scan(mlib)
+for s in sc
+	mem_scan = mx.scan_address(mlib,s)
+	print(s + " " + mem_scan + "\n")
+end for
+exit("scan complete")
