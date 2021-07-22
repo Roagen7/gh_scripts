@@ -1,0 +1,26 @@
+//script for faster compilation of *.src scripts
+//automatically builds and runs the code with specified params
+
+
+if params.len < 1 or params[0] == "-h" or params[0] == "--help" then
+	exit("Usage: gh [file.src] [params...]")
+end if 
+
+print(current_path + "/" + params[0][:params[0].len-4])
+
+
+get_shell.build(current_path + "/" + params[0], current_path)
+
+if params.len > 1 then
+	s = ""
+	params_s = slice(params,1)
+	for param in params_s
+		s = s + param
+		s = s + " "
+	end for
+	
+	
+	get_shell.launch(current_path + "/" + params[0][:params[0].len-4],slice(s,0,s.len - 1))
+else 
+	get_shell.launch(current_path + "/" + params[0][:params[0].len-4])
+end if
