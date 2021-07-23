@@ -1,0 +1,44 @@
+//WIP lisp interpreter in GreyScript, heavily inspired by the article https://norvig.com/lispy.html 
+
+
+tokenize = function(str)
+		tokens = str.replace("(", " ( ").replace(")", " ) ").split(" ")	
+		newTokens = []
+		for token in tokens
+			if not token == "" then 
+				newTokens.push(token)
+			end if
+	end for
+		print(newTokens)
+		return newTokens
+end function 
+
+readFromTokens = function(tokens) 
+	if tokens.len == 0 then
+		exit("unexpected EOF")
+	end if
+	token = tokens.pull
+	
+	if token == "(" then
+		L = []
+		while not tokens[0] == ")" 
+			L.push(readFromTokens(tokens))
+		end while
+		tokens.pull
+		return L 
+	else
+		if token == ")" then
+			exit("unexpected )")
+		end if
+	return atom(token)
+	
+	end if
+end function
+
+atom = function(token)
+	if token.val == 0 then
+		return token
+	else 
+		return token.val
+		
+end function
