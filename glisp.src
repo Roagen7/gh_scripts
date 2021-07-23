@@ -13,7 +13,7 @@ end function
 
 readFromTokens = function(tokens) 
 	if tokens.len == 0 then
-		exit("unexpected EOF")
+		exit("unexpected bEOF")
 	end if
 	token = tokens.pull
 	
@@ -93,11 +93,14 @@ eval = function(x)
 		end if
 		return eval(exp)
 	end if
+	if x[0] == "write" then
+		exp = x[1]
+		print(eval(exp))
+	end if
 	if x[0] == "define" then
 		symbol = x[1]
 		exp = x[2]
 		env[symbol] = eval(exp)
-		//return symbol + " = " + env[x]
 	else
 		proc =  eval(x[0])
 		args = []
@@ -105,9 +108,15 @@ eval = function(x)
 			args.push(eval(arg))
 		end for
 		return operate(proc,args)
-		
 	end if
+end function
 
+schstr = function(out)
+	if typeof(out) == "list" then
+		return ""
+	else 
+		return out
+	end if
 end function
 
 
@@ -115,7 +124,7 @@ repl = function()
 	while 1
 		val = eval(parse(user_input("glisp>")))
 		if val == "exit" then exit("byye ")
-		print(val)
+		print(schstr(val))
 	end while
 end function
 
@@ -129,5 +138,27 @@ if params.len == 0 or (params.len == 1 and params[0] == "-r") then
 end if
 
 if params.len == 2 and params[0] == "-f" then
-	
+	comp = get_shell.host_computer
+	ff = comp.File(current_path+"/"+params[1])
+	ff = ff.get_content.split("\n")
+	for line in ff
+		line = line.trim
+		
+		if not line.len == 0 and not line[0] == ";" then
+			val = eval(parse(line))
+			schstr(val)
+		end if
+	end for
 end if
+
+
+
+
+
+
+
+
+
+
+
+
