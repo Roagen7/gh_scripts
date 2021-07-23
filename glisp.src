@@ -44,23 +44,20 @@ parse = function(str)
 	return readFromTokens(tokenize(str))
 end function 
 
-
-var_env = {}
-env = function(key, params)
-	if key == "+" then
-		return params[0] + params[1]
+operate = function(type,args)
+	if type == "+" then
+		return args[0] + args[1]
 	end if
-	if key == "-" then
-		return params[0] - params[1]
+	if type == "equals?" then
+		return args[0] == args[1]
 	end if
-	
-	return var_env[key]
-	
 end function
+
+env = {"+":"+","equals?":"equals?"}
 
 eval = function(x)
 	if typeof(x) == "string" then 
-		return env(x,[])
+		return env[x]
 	end if
 	if typeof(x) == "number" then
 		return x
@@ -74,9 +71,28 @@ eval = function(x)
 	if x[0] == "define" then
 		symbol = x[1]
 		exp = x[2]
-		var_env[symbol] = exp
-	else 	
-		return eval(x[0])		
+		env[symbol] = eval(exp)
+		return symbool + " = " + env[x]
+	else
+		proc =  eval(x[0])
+		args = []
+		for arg in slice(x,1)
+			args.push(eval(arg))
+		end for
+		return operate(proc,args)
+		
 	end if
 
 end function
+
+
+repl = function()
+	while 1
+		val = eval(parse(user_input("glisp>")))
+		if val == "exit" then exit("byye ")
+		print(val)
+	end while
+end function
+
+
+repl()
