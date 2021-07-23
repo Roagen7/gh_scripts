@@ -1,6 +1,5 @@
 //WIP lisp interpreter in GreyScript, heavily inspired by the article https://norvig.com/lispy.html 
 
-
 tokenize = function(str)
 		tokens = str.replace("(", " ( ").replace(")", " ) ").split(" ")	
 		newTokens = []
@@ -22,7 +21,7 @@ readFromTokens = function(tokens)
 		L = []
 		while not tokens[0] == ")" 
 			L.push(readFromTokens(tokens))
-		end while
+	end while
 		tokens.pull
 		return L 
 	else
@@ -66,13 +65,19 @@ eval = function(x)
 		test = x[1]
 		conseq = x[2]
 		alt = x[3]
-		return 1
+		exp = 1
+		if eval(test) then
+			exp = conseq
+		else 
+			exp = alt
+		end if
+		return eval(exp)
 	end if
 	if x[0] == "define" then
 		symbol = x[1]
 		exp = x[2]
 		env[symbol] = eval(exp)
-		return symbool + " = " + env[x]
+		//return symbol + " = " + env[x]
 	else
 		proc =  eval(x[0])
 		args = []
@@ -93,6 +98,5 @@ repl = function()
 		print(val)
 	end while
 end function
-
 
 repl()
