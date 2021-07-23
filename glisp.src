@@ -21,7 +21,7 @@ readFromTokens = function(tokens)
 		L = []
 		while not tokens[0] == ")" 
 			L.push(readFromTokens(tokens))
-	end while
+		end while
 		tokens.pull
 		return L 
 	else
@@ -50,13 +50,33 @@ operate = function(type,args)
 	if type == "equals?" then
 		return args[0] == args[1]
 	end if
+	if type == "-" then
+		return args[0] - args[1]
+	end if
+	if type == ">" then
+		return args[0] > args[1]
+	end if
+	if type == "<" then
+		return args[0] <  args[1]
+	end if
+	if type == "*" then
+		return args[0] * args[1]
+	end if
+	if type == "/" then
+		return args[0] / args[1]
+	end if
+
 end function
 
-env = {"+":"+","equals?":"equals?"}
+env = {"0":0}
 
 eval = function(x)
 	if typeof(x) == "string" then 
-		return env[x]
+		if env.hasIndex(x) then
+			return env[x]
+		else 
+			return x
+		end if
 	end if
 	if typeof(x) == "number" then
 		return x
@@ -99,4 +119,15 @@ repl = function()
 	end while
 end function
 
-repl()
+
+usage = "Usage: \n glisp  # opens repl \n glisp -r # opens repl \n glisp -f [filename] # runs lisp from file"
+
+if params.len == 1 and params[0] == "-h" then exit(usage)
+
+if params.len == 0 or (params.len == 1 and params[0] == "-r") then
+	repl()	
+end if
+
+if params.len == 2 and params[0] == "-f" then
+	
+end if
