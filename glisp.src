@@ -9,7 +9,6 @@ tokenize = function(str)
 				newTokens.push(token)
 			end if
 	end for
-		print(newTokens)
 		return newTokens
 end function 
 
@@ -30,8 +29,7 @@ readFromTokens = function(tokens)
 		if token == ")" then
 			exit("unexpected )")
 		end if
-	return atom(token)
-	
+		return atom(token)
 	end if
 end function
 
@@ -40,5 +38,45 @@ atom = function(token)
 		return token
 	else 
 		return token.val
-		
+end function
+
+parse = function(str)
+	return readFromTokens(tokenize(str))
+end function 
+
+
+var_env = {}
+env = function(key, params)
+	if key == "+" then
+		return params[0] + params[1]
+	end if
+	if key == "-" then
+		return params[0] - params[1]
+	end if
+	
+	return var_env[key]
+	
+end function
+
+eval = function(x)
+	if typeof(x) == "string" then 
+		return env(x,[])
+	end if
+	if typeof(x) == "number" then
+		return x
+	end if
+	if x[0] == "if" then
+		test = x[1]
+		conseq = x[2]
+		alt = x[3]
+		return 1
+	end if
+	if x[0] == "define" then
+		symbol = x[1]
+		exp = x[2]
+		var_env[symbol] = exp
+	else 	
+		return eval(x[0])		
+	end if
+
 end function
